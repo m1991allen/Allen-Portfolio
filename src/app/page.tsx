@@ -36,7 +36,7 @@ export default async function HomePage() {
         <Reveal delay={160}>
           <p className="mt-8 max-w-2xl text-lg leading-relaxed text-ink-2">
             我是 Allen——橫跨媒體與接案兩種節奏的網頁設計師與前端工程師。
-            在民視做過百萬流量的新聞互動專題，也為各行各業打造俐落好用的形象官網。
+            在媒體業做過百萬流量的新聞互動專題，也為各行各業打造俐落好用的形象官網。
           </p>
         </Reveal>
         <Reveal delay={240}>
