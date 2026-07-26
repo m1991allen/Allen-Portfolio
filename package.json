@@ -1,0 +1,33 @@
+{
+  "name": "allen-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "seed": "node --env-file=.env.local --import tsx scripts/seed-firestore.ts",
+    "screenshot": "node --import tsx scripts/capture-screenshots.ts"
+  },
+  "dependencies": {
+    "firebase": "^12.16.0",
+    "firebase-admin": "^14.2.0",
+    "next": "16.2.11",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "resend": "^6.18.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.11",
+    "playwright": "^1.49.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.23.1",
+    "typescript": "^5"
+  }
+}

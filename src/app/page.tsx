@@ -1,0 +1,244 @@
+import Reveal from "@/components/reveal";
+import WorkGrid from "@/components/work-grid";
+import TipJar from "@/components/tip-jar";
+import { getPublishedWorks, getWorkCategories } from "@/lib/works";
+import { site, skills, stack, experience, education } from "@/data/site";
+
+// 首頁每 5 分鐘重新產生一次（ISR），讓後台改動會反映上來
+export const revalidate = 300;
+
+export default async function HomePage() {
+  const [works, categories] = await Promise.all([
+    getPublishedWorks(),
+    getWorkCategories(),
+  ]);
+
+  return (
+    <>
+      {/* ── Hero ───────────────────────────────────────── */}
+      <section className="shell relative overflow-x-clip pt-16 pb-20 sm:pt-24 lg:pt-32">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute top-0 right-0 -z-10 h-[34rem] w-[34rem] translate-x-1/4 -translate-y-1/4 rounded-full bg-accent-soft/55 blur-[110px]"
+        />
+
+        <Reveal>
+          <p className="eyebrow">Web Designer / Front-End Engineer</p>
+        </Reveal>
+        <Reveal delay={80}>
+          <h1 className="display mt-6 max-w-4xl text-[2.75rem] leading-[1.08] sm:text-6xl lg:text-7xl">
+            用設計與程式，
+            <br />
+            把想法變成
+            <span className="text-accent"> 會說話的網站</span>。
+          </h1>
+        </Reveal>
+        <Reveal delay={160}>
+          <p className="mt-8 max-w-2xl text-lg leading-relaxed text-ink-2">
+            我是 Allen——橫跨媒體與接案兩種節奏的網頁設計師與前端工程師。
+            在民視做過百萬流量的新聞互動專題，也為各行各業打造俐落好用的形象官網。
+          </p>
+        </Reveal>
+        <Reveal delay={240}>
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <a
+              href="#works"
+              className="rounded-full bg-ink px-7 py-3.5 text-sm text-paper transition-colors hover:bg-accent"
+            >
+              看我的作品
+            </a>
+            <a
+              href="#tip"
+              className="rounded-full border border-line px-7 py-3.5 text-sm text-ink transition-colors hover:border-ink"
+            >
+              請我喝咖啡 ☕
+            </a>
+          </div>
+        </Reveal>
+
+        {/* 技能雲 */}
+        <Reveal delay={320}>
+          <div className="mt-16 flex flex-wrap gap-2 border-t border-line pt-10">
+            {stack.map((s) => (
+              <span
+                key={s}
+                className="rounded-full border border-line px-3.5 py-1.5 text-xs text-muted"
+              >
+                {s}
+              </span>
+            ))}
+          </div>
+        </Reveal>
+      </section>
+
+      {/* ── About ──────────────────────────────────────── */}
+      <section id="about" className="shell scroll-mt-24 py-24 lg:py-32">
+        <div className="grid gap-14 lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="lg:sticky lg:top-32 lg:self-start">
+            <Reveal>
+              <p className="eyebrow">關於我</p>
+              <h2 className="display mt-5 text-3xl sm:text-4xl">
+                做網站這件事，
+                <br />
+                我做了快十年。
+              </h2>
+            </Reveal>
+          </div>
+
+          <div>
+            <Reveal>
+              <div className="space-y-6 text-lg leading-relaxed text-ink-2">
+                <p>
+                  世新大學資管系網路科技組畢業，一路從企業形象網站做到新聞媒體的互動專題。
+                  我習慣一手包辦設計與前端——因為好的網站，是「怎麼看」和「怎麼動」一起想出來的。
+                </p>
+                <p>
+                  在接案公司時，我為各產業客戶做出一個個俐落、好維護的官網；
+                  進到民視後，我開始用捲動敘事、資料視覺化與趣味互動，
+                  把一則新聞說成一種體驗，其中 COVID-19 專題創下了百萬流量。
+                </p>
+                <p className="border-l-2 border-accent pl-5 text-ink">
+                  {site.motto}
+                  <span className="mt-1 block text-sm text-muted">
+                    —— 這是我一直相信的事。
+                  </span>
+                </p>
+              </div>
+            </Reveal>
+
+            <Reveal delay={120}>
+              <div className="mt-12 border-t border-line pt-8">
+                <p className="eyebrow">學歷</p>
+                <ul className="mt-5 space-y-3">
+                  {education.map((e) => (
+                    <li key={e.school} className="flex items-baseline gap-3">
+                      <span className="text-ink">{e.school}</span>
+                      {e.major && (
+                        <span className="text-sm text-muted">{e.major}</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Skills ─────────────────────────────────────── */}
+      <section id="skills" className="scroll-mt-24 bg-paper-2 py-24 lg:py-32">
+        <div className="shell">
+          <Reveal>
+            <p className="eyebrow">我能做什麼</p>
+            <h2 className="display mt-5 max-w-2xl text-3xl sm:text-4xl">
+              從一張設計稿，到一個真的跑得動的網站。
+            </h2>
+          </Reveal>
+
+          <div className="mt-14 grid gap-px overflow-hidden rounded-2xl bg-line sm:grid-cols-2">
+            {skills.map((s, i) => (
+              <Reveal key={s.no} delay={(i % 2) * 90}>
+                <div className="h-full bg-paper p-8 lg:p-10">
+                  <span className="display text-2xl text-accent">{s.no}</span>
+                  <h3 className="display mt-4 text-xl text-ink">{s.title}</h3>
+                  <p className="mt-3 leading-relaxed text-muted">{s.desc}</p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {s.items.map((it) => (
+                      <span
+                        key={it}
+                        className="rounded-full border border-line px-3 py-1.5 text-xs text-ink-2"
+                      >
+                        {it}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Experience ─────────────────────────────────── */}
+      <section id="experience" className="shell scroll-mt-24 py-24 lg:py-32">
+        <Reveal>
+          <p className="eyebrow">工作經歷</p>
+          <h2 className="display mt-5 text-3xl sm:text-4xl">走過的路。</h2>
+        </Reveal>
+
+        <div className="mt-14">
+          {experience.map((e, i) => (
+            <Reveal key={e.company} delay={i * 80}>
+              <div className="grid gap-4 border-b border-line py-8 sm:grid-cols-[8rem_1fr] lg:gap-10">
+                <div>
+                  <p className="eyebrow text-accent">{e.period}</p>
+                </div>
+                <div>
+                  <h3 className="display text-xl text-ink">
+                    {e.company}
+                    <span className="ml-3 font-sans text-sm font-normal text-muted">
+                      {e.role}
+                    </span>
+                  </h3>
+                  <p className="mt-3 max-w-2xl leading-relaxed text-muted">
+                    {e.desc}
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Works ──────────────────────────────────────── */}
+      <section id="works" className="shell scroll-mt-24 py-24 lg:py-32">
+        <Reveal>
+          <div className="flex items-end justify-between gap-6 border-b border-line pb-8">
+            <div>
+              <p className="eyebrow">作品集</p>
+              <h2 className="display mt-5 text-3xl sm:text-4xl">
+                做過、而且還在線上的作品。
+              </h2>
+            </div>
+            <p className="hidden shrink-0 text-sm text-muted sm:block">
+              點擊卡片前往實際網站 ↗
+            </p>
+          </div>
+        </Reveal>
+
+        <div className="mt-12">
+          <WorkGrid works={works} categories={categories} />
+        </div>
+      </section>
+
+      {/* ── Tip Jar（抖內）──────────────────────────────── */}
+      <section id="tip" className="shell scroll-mt-24 pb-8">
+        <div className="relative overflow-hidden rounded-3xl bg-ink px-6 py-16 sm:px-10 lg:px-16 lg:py-24">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute top-0 right-0 h-80 w-80 translate-x-1/4 -translate-y-1/4 rounded-full bg-accent/25 blur-[100px]"
+          />
+          <div className="relative grid gap-12 lg:grid-cols-[1fr_1fr] lg:items-center">
+            <div>
+              <p className="eyebrow text-paper/50">支持一下</p>
+              <h2 className="display mt-5 text-3xl text-paper sm:text-4xl">
+                覺得有幫助？
+                <br />
+                請我喝杯咖啡吧 ☕
+              </h2>
+              <p className="mt-6 max-w-md leading-relaxed text-paper/60">
+                如果我的作品或分享對你有一點點幫助，歡迎小額抖內。
+                你的每一杯咖啡，都是我持續做東西的動力。
+              </p>
+              <p className="mt-4 text-xs text-paper/40">
+                以綠界 ECPay 安全結帳。目前為測試模式，不會實際扣款。
+              </p>
+            </div>
+
+            <TipJar />
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

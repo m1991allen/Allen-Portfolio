@@ -1,0 +1,132 @@
+@import "tailwindcss";
+
+@theme {
+  /* 色彩：暖白紙感 + 墨黑 + 磚橘重點色 */
+  --color-paper: #fbfaf7;
+  --color-paper-2: #f3f0ea;
+  --color-ink: #16150f;
+  --color-ink-2: #3b3830;
+  --color-muted: #797365;
+  --color-line: #e2ded4;
+  --color-accent: #c2481e;
+  --color-accent-soft: #f0d9cf;
+
+  --font-sans:
+    var(--font-noto-sans-tc), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-serif:
+    var(--font-noto-serif-tc), ui-serif, Georgia, "Times New Roman", serif;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* 錨點捲動時避開固定頁首 */
+    scroll-padding-top: 6rem;
+    /* 最後一道保險：任何裝飾元素都不該產生橫向捲動。
+       用 clip 而非 hidden，才不會建立捲動容器而破壞頁首的 sticky。 */
+    overflow-x: clip;
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  /* 主要容器寬度 */
+  .shell {
+    width: 100%;
+    max-width: 78rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .shell {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /* 小標籤：ALL CAPS + 字距 */
+  .eyebrow {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+
+  /* 標題：襯線、緊排 */
+  .display {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+
+  /* 底線動畫連結 */
+  .link-underline {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.4s var(--ease-out-soft);
+  }
+  .link-underline:hover {
+    background-size: 100% 1px;
+  }
+}
+
+/* 進場動畫：預設隱藏，進入視窗後由 IntersectionObserver 加上 data-shown */
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    transition:
+      opacity 0.7s var(--ease-out-soft),
+      transform 0.7s var(--ease-out-soft);
+  }
+  .reveal[data-shown="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
