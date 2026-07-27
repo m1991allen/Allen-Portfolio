@@ -1,19 +1,23 @@
 "use client";
 
 import { useState } from "react";
+import { uploadImage } from "@/lib/client-upload";
 
 /**
- * 圖片欄位：可上傳檔案（存到 Firebase Storage），也可直接貼網址。
+ * 圖片欄位：可上傳檔案（瀏覽器先壓縮再存到 Vercel Blob），也可直接貼網址。
  * value 是圖片網址，onChange 回傳新的網址。
  */
 export default function ImageUpload({
   value,
   onChange,
   label,
+  prefix = "works",
 }: {
   value: string;
   onChange: (url: string) => void;
   label?: string;
+  /** 上傳到 Vercel Blob 的路徑前綴。 */
+  prefix?: string;
 }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,15 +28,8 @@ export default function ImageUpload({
     setError(null);
     setUploading(true);
     try {
-      const form = new FormData();
-      form.append("file", file);
-      const res = await fetch("/api/admin/upload", {
-        method: "POST",
-        body: form,
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "上傳失敗");
-      onChange(data.url);
+      const url = await uploadImage(file, prefix);
+      onChange(url);
     } catch (err) {
       setError(err instanceof Error ? err.message : "上傳失敗");
     } finally {
