@@ -8,11 +8,11 @@ type Props = {
   priority?: boolean;
 };
 
-/** 各分類的標籤底色 */
+/** 各分類的標籤底色（與紫色主題協調的一組色相） */
 const categoryColor: Record<string, string> = {
-  媒體專題: "#c2481e",
-  互動專題: "#1e6f8e",
-  企業形象: "#4a6b32",
+  媒體專題: "#7c3aed", // 紫（呼應主題重點色）
+  互動專題: "#2563eb", // 藍
+  企業形象: "#0d9488", // 青綠
 };
 
 export default function WorkCard({
@@ -31,7 +31,7 @@ export default function WorkCard({
       className="group block"
       aria-label={`開啟作品：${work.title}（新分頁）`}
     >
-      <div className="relative overflow-hidden rounded-2xl bg-paper-2">
+      <div className="relative overflow-hidden rounded-2xl border border-line bg-paper-2 ring-0 ring-accent/60 transition-[box-shadow] duration-500 group-hover:ring-2">
         <div className={large ? "aspect-16/10" : "aspect-4/3"}>
           <Image
             src={work.cover}
@@ -47,9 +47,9 @@ export default function WorkCard({
           />
         </div>
 
-        {/* hover 時浮現的遮罩與提示 */}
-        <div className="pointer-events-none absolute inset-0 flex items-end justify-end bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0 p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-          <span className="rounded-full bg-paper px-4 py-2 text-xs text-ink">
+        {/* hover 時浮現的遮罩與提示（固定暗色遮罩，不受主題影響） */}
+        <div className="pointer-events-none absolute inset-0 flex items-end justify-end bg-gradient-to-t from-black/55 via-black/0 to-black/0 p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+          <span className="mono rounded-full bg-white px-4 py-2 text-xs text-black">
             前往網站 ↗
           </span>
         </div>
@@ -97,7 +97,7 @@ export default function WorkCard({
             </div>
           )}
         </div>
-        <span className="shrink-0 pt-1.5 text-xs text-muted tabular-nums">
+        <span className="mono shrink-0 pt-1.5 text-xs text-muted tabular-nums">
           {work.year}
         </span>
       </div>

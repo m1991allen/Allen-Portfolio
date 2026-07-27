@@ -1,23 +1,41 @@
 @import "tailwindcss";
 
 @theme {
-  /* 色彩：暖白紙感 + 墨黑 + 磚橘重點色 */
-  --color-paper: #fbfaf7;
-  --color-paper-2: #f3f0ea;
-  --color-ink: #16150f;
-  --color-ink-2: #3b3830;
-  --color-muted: #797365;
-  --color-line: #e2ded4;
-  --color-accent: #c2481e;
-  --color-accent-soft: #f0d9cf;
+  /* ── 色彩（亮色）：冷調紫白 + 深墨紫 + 紫礦重點色 ───────────── */
+  --color-paper: #faf9fc;
+  --color-paper-2: #f0eef6;
+  --color-ink: #14121c;
+  --color-ink-2: #3a3548;
+  --color-muted: #78738a;
+  --color-line: #e5e1ee;
+  --color-accent: #7c3aed;
+  --color-accent-soft: #e5d9fb;
 
   --font-sans:
     var(--font-noto-sans-tc), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", sans-serif;
   --font-serif:
     var(--font-noto-serif-tc), ui-serif, Georgia, "Times New Roman", serif;
+  --font-mono:
+    var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, "SF Mono",
+    Menlo, Consolas, monospace;
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── 深色主題：由 <html data-theme="dark"> 觸發（見 layout 的防閃爍腳本）
+   Tailwind v4 的 bg-paper / text-ink 等工具都指向 var(--color-*)，
+   因此只要在更高特異度的選擇器覆寫變數，整站配色即會切換。 ── */
+:root[data-theme="dark"] {
+  --color-paper: #0c0a12;
+  --color-paper-2: #17141f;
+  --color-ink: #ebe8f2;
+  --color-ink-2: #c3bcd4;
+  --color-muted: #857e99;
+  --color-line: #262233;
+  --color-accent: #a78bfa;
+  --color-accent-soft: #2a1c44;
+  color-scheme: dark;
 }
 
 @layer base {
@@ -40,10 +58,14 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* 亮 / 暗 切換時的柔和過場 */
+    transition:
+      background-color 0.4s var(--ease-out-soft),
+      color 0.4s var(--ease-out-soft);
   }
 
   ::selection {
-    background-color: var(--color-ink);
+    background-color: var(--color-accent);
     color: var(--color-paper);
   }
 
@@ -69,13 +91,33 @@
     }
   }
 
-  /* 小標籤：ALL CAPS + 字距 */
+  /* 小標籤：等寬字 + ALL CAPS + 字距（科技感微型文字） */
   .eyebrow {
+    font-family: var(--font-mono);
     font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.18em;
+    font-weight: 500;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--color-muted);
+  }
+  /* 前綴小方點，讓標籤更像終端機/系統標記 */
+  .eyebrow--dot::before {
+    content: "";
+    display: inline-block;
+    width: 0.4rem;
+    height: 0.4rem;
+    margin-right: 0.6rem;
+    vertical-align: 0.05em;
+    border-radius: 9999px;
+    background-color: var(--color-accent);
+  }
+
+  /* 區塊編號：等寬、磚橘 */
+  .section-index {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--color-accent);
   }
 
   /* 標題：襯線、緊排 */
@@ -84,6 +126,10 @@
     font-weight: 600;
     letter-spacing: -0.01em;
     line-height: 1.15;
+  }
+
+  .mono {
+    font-family: var(--font-mono);
   }
 
   /* 底線動畫連結 */
@@ -99,8 +145,27 @@
   }
 }
 
-/* 進場動畫：預設隱藏，進入視窗後由 IntersectionObserver 加上 data-shown */
 @layer utilities {
+  /* 細格線背景紋理（科技感） */
+  .tech-grid {
+    background-image:
+      linear-gradient(to right, var(--color-line) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--color-line) 1px, transparent 1px);
+    background-size: 4rem 4rem;
+    -webkit-mask-image: radial-gradient(
+      ellipse 80% 60% at 50% 0%,
+      #000 30%,
+      transparent 75%
+    );
+    mask-image: radial-gradient(
+      ellipse 80% 60% at 50% 0%,
+      #000 30%,
+      transparent 75%
+    );
+    opacity: 0.5;
+  }
+
+  /* 進場動畫：預設隱藏，進入視窗後由 IntersectionObserver 加上 data-shown */
   .reveal {
     opacity: 0;
     transform: translateY(1.25rem);

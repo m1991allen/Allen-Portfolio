@@ -45,7 +45,7 @@ export default function WorkGrid({ works, categories }: Props) {
                 }`}
               >
                 {c}
-                <span className="ml-1.5 text-[0.6875rem] tabular-nums opacity-60">
+                <span className="mono ml-1.5 text-[0.6875rem] tabular-nums opacity-60">
                   {c === "全部"
                     ? works.length
                     : works.filter((w) => w.category === c).length}

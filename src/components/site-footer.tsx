@@ -9,7 +9,8 @@ export default function SiteFooter() {
         <div className="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr]">
           {/* 品牌 + CTA */}
           <div>
-            <p className="display text-3xl leading-snug text-paper sm:text-4xl">
+            <p className="eyebrow eyebrow--dot text-paper/45">聯絡合作</p>
+            <p className="display mt-5 text-3xl leading-snug text-paper sm:text-4xl">
               有專案想合作，
               <br />
               或只是想聊聊？
@@ -55,32 +56,38 @@ export default function SiteFooter() {
             <p className="eyebrow text-paper/45">聯絡我</p>
             <ul className="mt-6 space-y-4 text-sm text-paper/70">
               <li>
-                <span className="block text-xs text-paper/40">Email</span>
+                <span className="mono block text-[0.625rem] tracking-wider text-paper/40">
+                  EMAIL
+                </span>
                 <a
                   href={`mailto:${contact.email}`}
-                  className="link-underline transition-colors hover:text-paper"
+                  className="link-underline mono transition-colors hover:text-paper"
                 >
                   {contact.email}
                 </a>
               </li>
               <li>
-                <span className="block text-xs text-paper/40">電話</span>
+                <span className="mono block text-[0.625rem] tracking-wider text-paper/40">
+                  PHONE
+                </span>
                 <a
                   href={contact.phoneHref}
-                  className="link-underline transition-colors hover:text-paper"
+                  className="link-underline mono transition-colors hover:text-paper"
                 >
                   {contact.phone}
                 </a>
               </li>
               <li>
-                <span className="block text-xs text-paper/40">所在地</span>
+                <span className="mono block text-[0.625rem] tracking-wider text-paper/40">
+                  LOCATION
+                </span>
                 <span>{contact.location}</span>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-3 border-t border-paper/12 pt-8 text-xs text-paper/40 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mono mt-16 flex flex-col gap-3 border-t border-paper/12 pt-8 text-xs text-paper/40 sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {year} {site.name}. All rights reserved.
           </p>

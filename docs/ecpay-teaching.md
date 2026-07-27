@@ -182,10 +182,16 @@ npm run dev
 
 ## 6. 上線前檢查清單
 
-- [ ] 到綠界正式後台申請商店，換掉 `.env.local` 的 `ECPAY_MERCHANT_ID / HASH_KEY / HASH_IV`
+> ⚠️ 正式站跑在 Vercel 上，讀的是 **Vercel 專案的環境變數**，不是你本機的 `.env.local`。
+> 所以下面這些值要到 **Vercel → 專案 → Settings → Environment Variables** 設定
+> （設定或修改後要重新 Deploy 才會生效）。`.env.local` 只影響你本機開發。
+
+- [ ] 到綠界正式後台申請商店，取得你自己的 `ECPAY_MERCHANT_ID / HASH_KEY / HASH_IV`
+- [ ] 在 Vercel 環境變數填入上面三組值（正式金鑰**只放 Vercel**，不要 commit 進 git）
 - [ ] `ECPAY_ENV` 改成 `production`
-- [ ] `NEXT_PUBLIC_SITE_URL` 改成正式網址
-- [ ] 在綠界後台把 ReturnURL 白名單設好（若後台有要求）
+- [ ] `NEXT_PUBLIC_SITE_URL` 設成正式網址（例如 `https://allenliu.dev`）——這決定綠界的
+      `ReturnURL` / `OrderResultURL` 打回哪裡，填錯 callback 就收不到
+- [ ] 在綠界後台把網域 / ReturnURL 白名單設好（若後台有要求）
 - [ ] 用一筆小額真實刷卡跑一次完整流程，確認後台 `donations` 有正確變 `paid`
 
 ---

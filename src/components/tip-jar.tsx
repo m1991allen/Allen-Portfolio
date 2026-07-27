@@ -83,7 +83,7 @@ export default function TipJar() {
                 setAmount(p);
                 setCustom("");
               }}
-              className={`rounded-xl border px-3 py-3 text-sm transition-colors ${
+              className={`mono rounded-xl border px-3 py-3 text-sm transition-colors ${
                 on
                   ? "border-ink bg-ink text-paper"
                   : "border-line text-ink hover:border-ink"

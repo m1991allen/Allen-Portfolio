@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
 import { isFirebaseConfigured } from "@/lib/firebase-admin";
 import LogoutButton from "./logout-button";
+import ThemeToggle from "@/components/theme-toggle";
 
 /**
  * 後台受保護區的共用版面。
@@ -69,6 +70,10 @@ export default async function DashboardLayout({
                 查看網站 ↗
               </Link>
               <LogoutButton />
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <ThemeToggle />
+              <span className="text-xs text-muted">深／淺色</span>
             </div>
           </div>
         </aside>
