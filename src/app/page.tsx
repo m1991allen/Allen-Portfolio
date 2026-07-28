@@ -41,21 +41,22 @@ export default async function HomePage() {
         <div className="shell pt-16 pb-20 sm:pt-24 lg:pt-32">
           <Reveal>
             <p className="eyebrow eyebrow--dot">
-              Web Designer / Front-End Engineer
+              Front-End Engineer / Interactive Developer
             </p>
           </Reveal>
           <Reveal delay={80}>
             <h1 className="display mt-6 max-w-4xl text-[2.75rem] leading-[1.08] sm:text-6xl lg:text-7xl">
-              用設計與程式，
+              把複雜的資料，
               <br />
-              把想法變成
-              <span className="text-accent"> 會說話的網站</span>。
+              變成
+              <span className="text-accent"> 看得懂的介面</span>。
             </h1>
           </Reveal>
           <Reveal delay={160}>
             <p className="mt-8 max-w-2xl text-lg leading-relaxed text-ink-2">
-              我是 Allen——橫跨媒體與接案兩種節奏的網頁設計師與前端工程師。
-              在媒體業做過百萬流量的新聞互動專題，也為各行各業打造俐落好用的形象官網。
+              我是 Allen——具備多年企業級開發經驗的前端工程師。
+              在媒體業主導媒資管理系統開發，也做過百萬流量的新聞互動專題；
+              近期把重心放在 AI 應用實作。
             </p>
           </Reveal>
           <Reveal delay={240}>
@@ -98,9 +99,9 @@ export default async function HomePage() {
             <Reveal>
               <SectionLabel index="01" label="關於我" />
               <h2 className="display mt-5 text-3xl sm:text-4xl">
-                做網站這件事，
+                從企業級系統，
                 <br />
-                我做了快十年。
+                到百萬流量的專題。
               </h2>
             </Reveal>
           </div>
@@ -109,13 +110,21 @@ export default async function HomePage() {
             <Reveal>
               <div className="space-y-6 text-lg leading-relaxed text-ink-2">
                 <p>
-                  世新大學資管系網路科技組畢業，一路從企業形象網站做到新聞媒體的互動專題。
-                  我習慣一手包辦設計與前端——因為好的網站，是「怎麼看」和「怎麼動」一起想出來的。
+                  世新大學資管系網路科技組畢業。第一次接觸網頁程式就被吸引——
+                  邏輯結構與視覺表現能在同一件事情上成立，這條路一走就是多年。
+                  退伍後到澳洲打工度假，替當地房東做了背包客棧網站，
+                  也在那時看見了東西方網頁設計在審美與功能上的差異。
                 </p>
                 <p>
-                  在接案公司時，我為各產業客戶做出一個個俐落、好維護的官網；
-                  進到民視後，我開始用捲動敘事、資料視覺化與趣味互動，
-                  把一則新聞說成一種體驗，其中 COVID-19 專題創下了百萬流量。
+                  在媒體業，我一邊主導企業級媒資管理系統的開發，
+                  把複雜的影音資料結構視覺化、重新設計內部人員的操作流程；
+                  一邊用原生 JS 搭配 CSS 動畫產製新聞互動專題，
+                  其中 COVID-19 系列創下百萬流量。
+                </p>
+                <p>
+                  近期把重心放在 AI 應用實作，透過 Side Project 探索 LLM API 整合、
+                  瀏覽器擴充功能與生產力工具開發，
+                  也持續研究微前端架構在多團隊協作下的拆分策略。
                 </p>
                 <p className="border-l-2 border-accent pl-5 text-ink">
                   {site.motto}
@@ -149,9 +158,9 @@ export default async function HomePage() {
       <section id="skills" className="scroll-mt-24 bg-paper-2 py-24 lg:py-32">
         <div className="shell">
           <Reveal>
-            <SectionLabel index="02" label="我能做什麼" />
+            <SectionLabel index="02" label="核心競爭力" />
             <h2 className="display mt-5 max-w-2xl text-3xl sm:text-4xl">
-              從一張設計稿，到一個真的跑得動的網站。
+              從模糊的需求，到穩定交付的介面。
             </h2>
           </Reveal>
 
@@ -193,7 +202,7 @@ export default async function HomePage() {
 
         <div className="mt-14">
           {experience.map((e, i) => (
-            <Reveal key={e.company} delay={i * 80}>
+            <Reveal key={e.id} delay={i * 80}>
               <div className="group grid gap-4 border-b border-line py-8 transition-colors hover:bg-paper-2/60 sm:grid-cols-[9rem_1fr] lg:gap-10">
                 <div className="flex items-baseline gap-3">
                   <span

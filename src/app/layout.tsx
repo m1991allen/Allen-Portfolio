@@ -31,7 +31,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const title = `${site.name}｜網頁設計師・前端工程師`;
+const title = `${site.name}｜前端工程師・互動網頁開發`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -45,15 +45,16 @@ export const metadata: Metadata = {
   creator: site.name,
   keywords: [
     "Allen Liu",
-    "網頁設計師",
     "前端工程師",
-    "作品集",
-    "Web Designer",
     "Front-End Engineer",
-    "Next.js",
     "React",
+    "Next.js",
     "互動專題",
     "資料視覺化",
+    "媒資管理系統",
+    "AI 應用開發",
+    "LLM API",
+    "作品集",
   ],
   alternates: { canonical: "/" },
   robots: {
