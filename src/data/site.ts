@@ -14,7 +14,7 @@ export const site = {
   description:
     "Allen Liu 是一位具備多年企業級開發經驗的前端工程師，專精 React、原生 JavaScript 與大型互動式網頁實作。在媒體業主導企業級媒資管理系統開發，將複雜的影音資料結構視覺化；也產製過多款百萬流量的 COVID-19 互動專題，把數據新聞轉化為高互動性的閱讀體驗。近期投入 AI 應用實作，探索 LLM API 整合、瀏覽器擴充功能與生產力工具開發。",
   /** 預設網址。實際以環境變數 NEXT_PUBLIC_SITE_URL 為準，見下方 siteUrl。 */
-  url: "https://m1991allen-portfolio.vercel.app",
+  url: "https://m1991allen.dev",
   startYear: 2015,
 } as const;
 
