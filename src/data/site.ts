@@ -133,7 +133,7 @@ export const experience = [
   {
     id: "studio",
     period: "接案時期",
-    company: "小型工作室",
+    company: "接案工作室",
     role: "網頁設計師",
     desc: "以工作室形式承接各產業客戶的企業形象網站，從設計到前端一手包辦，累積跨產業的視覺與版型經驗，也是網頁實務的起點。",
   },
