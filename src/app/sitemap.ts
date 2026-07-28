@@ -1,7 +1,5 @@
 import type { MetadataRoute } from "next";
-import { site } from "@/data/site";
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? site.url;
+import { siteUrl } from "@/data/site";
 
 /**
  * 一頁式作品集：主要可索引的頁面就是首頁。
@@ -10,7 +8,7 @@ const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? site.url;
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: baseUrl,
+      url: siteUrl,
       lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 1,

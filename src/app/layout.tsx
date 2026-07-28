@@ -8,7 +8,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import SiteHeader from "@/components/site-header";
 import SiteFooter from "@/components/site-footer";
-import { site } from "@/data/site";
+import { site, siteUrl } from "@/data/site";
 
 const notoSans = Noto_Sans_TC({
   variable: "--font-noto-sans-tc",
@@ -34,7 +34,7 @@ const jetbrainsMono = JetBrains_Mono({
 const title = `${site.name}｜網頁設計師・前端工程師`;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
+  metadataBase: new URL(siteUrl),
   title: {
     default: title,
     template: `%s｜${site.name}`,
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   openGraph: {
     title,
     description: site.description,
-    url: site.url,
+    url: siteUrl,
     type: "website",
     locale: "zh_TW",
     siteName: site.name,

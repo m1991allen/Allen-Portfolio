@@ -12,9 +12,20 @@ export const site = {
   motto: "「自信」，是通往成功的必要因子。",
   description:
     "劉 Allen 是一位網頁設計師與前端工程師，橫跨媒體與接案兩種節奏——在民間全民電視台打造百萬流量的新聞互動專題，也為各行各業的企業做出俐落好用的形象官網。這裡收錄他這些年做過、且仍然在線上的作品。",
-  url: "https://allenliu.dev",
+  /** 預設網址。實際以環境變數 NEXT_PUBLIC_SITE_URL 為準，見下方 siteUrl。 */
+  url: "https://m1991allen-portfolio.vercel.app",
   startYear: 2015,
 } as const;
+
+/**
+ * 網站正式網址（單一來源）。
+ * metadataBase、canonical、og:url、sitemap、robots 全部用這個，
+ * 避免各處各自解析而分岔。之後買到自己的網域，改 NEXT_PUBLIC_SITE_URL 即可。
+ */
+export const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? site.url).replace(
+  /\/$/,
+  "",
+);
 
 /** 聯絡資訊（沿用舊履歷） */
 export const contact = {
