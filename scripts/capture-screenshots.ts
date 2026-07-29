@@ -21,6 +21,7 @@ const categoryColor: Record<string, string> = {
   媒體專題: "#c2481e",
   互動專題: "#1e6f8e",
   企業形象: "#4a6b32",
+  客戶系統: "#6b5832",
 };
 
 /** 品牌化佔位圖：截一張自製 HTML 當封面 */
@@ -97,8 +98,8 @@ async function main() {
   const fallback: string[] = [];
 
   for (const w of works) {
-    process.stdout.write(`▶ ${w.slug}  (${w.url})\n`);
-    let buf = await capture(browser, w.url);
+    process.stdout.write(`▶ ${w.slug} (${w.url ?? "無公開連結"})\n`);
+    let buf = w.url ? await capture(browser, w.url) : null;
     if (!buf) {
       buf = await placeholder(browser, w.title, w.category);
       fallback.push(w.slug);

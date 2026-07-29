@@ -23,7 +23,9 @@ function validate(w: Work): string | null {
   }
   if (!w.title.trim()) return "請填寫作品標題";
   if (!w.category.trim()) return "請填寫分類";
-  if (!w.url.trim()) return "請填寫作品網址";
+  if (w.url && !/^https?:\/\//.test(w.url)) {
+    return "作品網址請以 http:// 或 https:// 開頭";
+  }
   return null;
 }
 

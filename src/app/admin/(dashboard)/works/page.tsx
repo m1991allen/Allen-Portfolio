@@ -49,14 +49,18 @@ export default async function AdminWorksPage() {
             <PublishToggle slug={w.slug} published={w.published} />
 
             <div className="flex shrink-0 items-center gap-4 text-sm">
-              <a
-                href={w.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted transition-colors hover:text-ink"
-              >
-                預覽 ↗
-              </a>
+              {w.url ? (
+                <a
+                  href={w.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted transition-colors hover:text-ink"
+                >
+                  預覽 ↗
+                </a>
+              ) : (
+                <span className="text-muted/50">無連結</span>
+              )}
               <Link
                 href={`/admin/works/${w.slug}/edit`}
                 className="text-ink-2 transition-colors hover:text-ink"

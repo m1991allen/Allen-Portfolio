@@ -23,15 +23,10 @@ export default function WorkCard({
 }: Props) {
   const large = size === "large";
   const accent = categoryColor[work.category] ?? "#16150f";
+  const linked = Boolean(work.url);
 
-  return (
-    <a
-      href={work.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group block"
-      aria-label={`開啟作品：${work.title}（新分頁）`}
-    >
+  const inner = (
+    <>
       <div className="relative overflow-hidden rounded-2xl border border-line bg-paper-2 ring-0 ring-accent/60 transition-[box-shadow] duration-500 group-hover:ring-2">
         <div className={large ? "aspect-16/10" : "aspect-4/3"}>
           <Image
@@ -49,11 +44,13 @@ export default function WorkCard({
         </div>
 
         {/* hover 時浮現的遮罩與提示（固定暗色遮罩，不受主題影響） */}
-        <div className="pointer-events-none absolute inset-0 flex items-end justify-end bg-gradient-to-t from-black/55 via-black/0 to-black/0 p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-          <span className="mono rounded-full bg-white px-4 py-2 text-xs text-black">
-            前往網站 ↗
-          </span>
-        </div>
+        {linked && (
+          <div className="pointer-events-none absolute inset-0 flex items-end justify-end bg-gradient-to-t from-black/55 via-black/0 to-black/0 p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+            <span className="mono rounded-full bg-white px-4 py-2 text-xs text-black">
+              前往網站 ↗
+            </span>
+          </div>
+        )}
 
         <span
           className="absolute top-4 left-4 rounded-full px-3 py-1.5 text-[0.6875rem] font-medium text-paper backdrop-blur-sm"
@@ -85,7 +82,7 @@ export default function WorkCard({
           >
             {work.description}
           </p>
-          {work.tags.length > 0 && (
+          {(work.tags.length > 0 || !linked) && (
             <div className="mt-3 flex flex-wrap gap-1.5">
               {work.tags.slice(0, large ? 5 : 3).map((t) => (
                 <span
@@ -95,6 +92,11 @@ export default function WorkCard({
                   {t}
                 </span>
               ))}
+              {!linked && (
+                <span className="rounded-full border border-dashed border-line px-2.5 py-1 text-[0.6875rem] text-muted">
+                  不對外開放或無公開連結
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -102,6 +104,21 @@ export default function WorkCard({
           {work.year}
         </span>
       </div>
+    </>
+  );
+
+  // 沒有公開連結：渲染成一般 div。不掛 group，所有 group-hover: 自動失效
+  if (!linked) return <div>{inner}</div>;
+
+  return (
+    <a
+      href={work.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group block"
+      aria-label={`開啟作品：${work.title}（新分頁）`}
+    >
+      {inner}
     </a>
   );
 }

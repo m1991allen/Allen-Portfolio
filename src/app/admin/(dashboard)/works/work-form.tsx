@@ -47,7 +47,7 @@ export default function WorkForm({
       slug: w.slug.trim(),
       title: w.title.trim(),
       description: w.description.trim(),
-      url: w.url.trim(),
+      url: w.url?.trim() || undefined,
       role: w.role?.trim() || undefined,
       highlight: w.highlight?.trim() || undefined,
       tags: w.tags.map((t) => t.trim()).filter(Boolean),
@@ -119,10 +119,10 @@ export default function WorkForm({
         </Field>
       </div>
 
-      <Field label="作品網址（外部連結）" required>
+      <Field label="作品網址（外部連結）" hint="內部系統無公開網址可留空">
         <input
           type="url"
-          value={w.url}
+          value={w.url ?? ""}
           onChange={(e) => set("url", e.target.value)}
           placeholder="https://..."
           className={inputCls}

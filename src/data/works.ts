@@ -16,10 +16,10 @@ export type Work = {
   title: string;
   /** 一句話簡介 */
   description: string;
-  /** 分類：媒體專題 / 互動專題 / 企業形象 */
+  /** 分類，見下方 workCategories */
   category: string;
-  /** 外部實際網站連結 */
-  url: string;
+  /** 外部實際網站連結。內部系統等無公開網址者可留空，卡片會渲染成不可點的區塊 */
+  url?: string;
   /** 封面圖路徑（/works/{slug}.jpg 或 Storage URL） */
   cover: string;
   /** 技術 / 角色標籤 */
@@ -39,7 +39,7 @@ export type Work = {
 };
 
 /** 分類顯示順序 */
-export const workCategories = ["媒體專題", "互動專題", "企業形象"] as const;
+export const workCategories = ["媒體專題", "互動專題", "企業形象", "客戶系統"] as const;
 
 export const works: Work[] = [
   // ── 民視 FTV 時期：新聞互動專題 ──────────────────────────
