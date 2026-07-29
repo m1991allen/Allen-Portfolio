@@ -1,29 +1,53 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
 
 /**
- * 深/淺色切換。初始狀態由 layout 的防閃爍腳本寫在 <html data-theme> 上，
- * 這裡於掛載後讀回同步，避免 hydration 不一致。
+ * 主題狀態的真實來源是 <html data-theme>，由 layout 的防閃爍腳本在繪製前寫入。
+ * 那是 React 之外的狀態，所以用 useSyncExternalStore 訂閱，而不是在 effect 裡
+ * setState 同步——後者會多一次串接渲染，也是 react-hooks/set-state-in-effect
+ * 要擋的寫法。
  */
+function subscribe(onStoreChange: () => void) {
+  const observer = new MutationObserver(onStoreChange);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+  return () => observer.disconnect();
+}
+
+function getSnapshot(): Theme {
+  return document.documentElement.getAttribute("data-theme") === "dark"
+    ? "dark"
+    : "light";
+}
+
+/**
+ * 伺服器端無從得知使用者偏好，回 null 讓兩顆圖示先維持透明；
+ * hydration 後 getSnapshot 才補上真值，避免先畫錯再跳掉的閃爍。
+ */
+function getServerSnapshot(): null {
+  return null;
+}
+
+/** 深/淺色切換。 */
 export default function ThemeToggle({
   className = "",
 }: {
   className?: string;
 }) {
-  const [theme, setTheme] = useState<Theme | null>(null);
+  const theme = useSyncExternalStore<Theme | null>(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
-  useEffect(() => {
-    const isDark =
-      document.documentElement.getAttribute("data-theme") === "dark";
-    setTheme(isDark ? "dark" : "light");
-  }, []);
-
+  // 只改 DOM 屬性，畫面更新交給上面的訂閱推回來
   const toggle = () => {
     const next: Theme = theme === "dark" ? "light" : "dark";
-    setTheme(next);
     const el = document.documentElement;
     if (next === "dark") el.setAttribute("data-theme", "dark");
     else el.removeAttribute("data-theme");
