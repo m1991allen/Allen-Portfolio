@@ -4,7 +4,8 @@
  * 對每個作品的 url 用無頭 Chromium 擷取首屏，存成 public/works/{slug}.jpg。
  * 若網站擋掉、逾時或回傳錯誤狀態，改用品牌化的佔位圖（同樣輸出 .jpg）。
  *
- * 執行：npm run screenshot
+ * 執行：npm run screenshot                    # 全部重截
+ *      npm run screenshot -- --only=miu,fixt  # 只截指定 slug（新增作品時用）
  * 需先安裝瀏覽器：npx playwright install chromium
  */
 
@@ -90,6 +91,20 @@ async function capture(browser: Browser, url: string): Promise<Buffer | null> {
   }
 }
 
+/** --only=a,b 只處理指定 slug；沒給就全部重截 */
+function targets() {
+  const arg = process.argv.find((a) => a.startsWith("--only="));
+  if (!arg) return works;
+
+  const wanted = arg.slice("--only=".length).split(",").filter(Boolean);
+  const picked = works.filter((w) => wanted.includes(w.slug));
+  const missing = wanted.filter((s) => !works.some((w) => w.slug === s));
+  if (missing.length) {
+    console.warn(`⚠ works.ts 裡找不到這些 slug：${missing.join(", ")}`);
+  }
+  return picked;
+}
+
 async function main() {
   await mkdir(OUT_DIR, { recursive: true });
   const browser = await chromium.launch();
@@ -97,7 +112,7 @@ async function main() {
   const done: string[] = [];
   const fallback: string[] = [];
 
-  for (const w of works) {
+  for (const w of targets()) {
     process.stdout.write(`▶ ${w.slug} (${w.url ?? "無公開連結"})\n`);
     let buf = w.url ? await capture(browser, w.url) : null;
     if (!buf) {
