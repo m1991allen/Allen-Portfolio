@@ -1,3 +1,4 @@
+import JsonLd from "@/components/json-ld";
 import Reveal from "@/components/reveal";
 import WorkGrid from "@/components/work-grid";
 import TipJar from "@/components/tip-jar";
@@ -26,6 +27,8 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd />
+
       {/* ── Hero ───────────────────────────────────────── */}
       <section className="relative overflow-x-clip">
         {/* 細格線背景紋理 */}

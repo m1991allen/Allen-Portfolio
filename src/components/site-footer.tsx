@@ -43,6 +43,7 @@ export default function SiteFooter() {
                   href={contact.resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label={`${site.name} 舊版線上履歷（新分頁開啟）`}
                   className="link-underline text-sm text-paper/70 transition-colors hover:text-paper"
                 >
                   舊版履歷

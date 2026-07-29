@@ -31,7 +31,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-const title = `${site.name}｜前端工程師・互動網頁開發`;
+const title = `${site.name}｜前端工程師作品集・React 與資料視覺化`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     default: title,
     template: `%s｜${site.name}`,
   },
-  description: site.description,
+  description: site.metaDescription,
   applicationName: site.name,
   authors: [{ name: site.name }],
   creator: site.name,
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title,
-    description: site.description,
+    description: site.metaDescription,
     url: siteUrl,
     type: "website",
     locale: "zh_TW",
@@ -73,7 +73,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title,
-    description: site.description,
+    description: site.metaDescription,
   },
 };
 

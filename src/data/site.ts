@@ -11,8 +11,15 @@ export const site = {
   /** 個人信念 */
   motto: "成功不必在我，團隊共好。",
   // 自介一律用「媒體業」稱呼，不點名公司；工作經歷區塊才寫實際公司名。
+  /** 長版自介。給結構化資料（JSON-LD）與頁面內文用，不進 meta description。 */
   description:
     "Allen Liu 是一位具備多年企業級開發經驗的前端工程師，專精 React、原生 JavaScript 與大型互動式網頁實作。在媒體業主導企業級媒資管理系統開發，將複雜的影音資料結構視覺化；也產製過多款百萬流量的 COVID-19 互動專題，把數據新聞轉化為高互動性的閱讀體驗。近期投入 AI 應用實作，探索 LLM API 整合、瀏覽器擴充功能與生產力工具開發。",
+  /**
+   * 短版自介，專供 meta description / OG / Twitter card。
+   * 控制在 120 字內，避免在 Google 搜尋結果被截斷（目前 91 字）。
+   */
+  metaDescription:
+    "Allen Liu — 前端工程師作品集。專精 React 與大型互動網頁開發，在媒體業主導企業級媒資管理系統，也製作過百萬流量的新聞互動專題與資料視覺化，近期投入 AI 應用實作。",
   /** 預設網址。實際以環境變數 NEXT_PUBLIC_SITE_URL 為準，見下方 siteUrl。 */
   url: "https://m1991allen.dev",
   startYear: 2015,
@@ -36,6 +43,16 @@ export const contact = {
   resumeUrl: "https://m1991allen.github.io/resume/",
   location: "台灣・台北",
 } as const;
+
+/**
+ * 同一個人的其他網路身分，供 JSON-LD 的 Person.sameAs 使用。
+ * Google 靠這組連結把散落各處的個人資料串成同一個實體，
+ * 之後有 LinkedIn / Medium 等公開檔案，往這裡加即可。
+ */
+export const profiles = [
+  "https://github.com/m1991allen",
+  contact.resumeUrl,
+] as const;
 
 /** 一頁式錨點導覽 */
 export const nav = [

@@ -36,7 +36,7 @@ export default function SiteHeader() {
         <Link
           href="/"
           className="group flex items-center gap-2.5"
-          aria-label={`${site.name} 首頁`}
+          aria-label={`${site.name} 前端工程師作品集 — 回首頁`}
         >
           <span
             aria-hidden
