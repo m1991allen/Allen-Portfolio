@@ -320,11 +320,3 @@ export const works: Work[] = [
     order: 18,
   },
 ];
-
-export const getPublishedWorks = () => works.filter((w) => w.published);
-
-export const featuredWorks = () =>
-  works.filter((w) => w.published && w.featured);
-
-export const workCategoryList = () =>
-  Array.from(new Set(getPublishedWorks().map((w) => w.category)));

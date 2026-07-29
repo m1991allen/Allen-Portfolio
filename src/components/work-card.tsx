@@ -43,9 +43,14 @@ export default function WorkCard({
           />
         </div>
 
-        {/* hover 時浮現的遮罩與提示（固定暗色遮罩，不受主題影響） */}
+        {/* hover 時浮現的遮罩與提示（固定暗色遮罩，不受主題影響）。
+            精選徽章佔了右下角，這時提示改靠左下，避免疊在一起。 */}
         {linked && (
-          <div className="pointer-events-none absolute inset-0 flex items-end justify-end bg-gradient-to-t from-black/55 via-black/0 to-black/0 p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+          <div
+            className={`pointer-events-none absolute inset-0 flex items-end bg-gradient-to-t from-black/55 via-black/0 to-black/0 p-5 opacity-0 transition-opacity duration-500 group-hover:opacity-100 ${
+              work.featured ? "justify-start" : "justify-end"
+            }`}
+          >
             <span className="mono rounded-full bg-white px-4 py-2 text-xs text-black">
               前往網站 ↗
             </span>
@@ -62,6 +67,14 @@ export default function WorkCard({
         {work.highlight && (
           <span className="absolute top-4 right-4 rounded-full bg-paper/90 px-3 py-1.5 text-[0.6875rem] font-medium text-accent backdrop-blur-sm">
             {work.highlight}
+          </span>
+        )}
+
+        {/* 精選徽章：琥珀金固定色，不隨主題變動，才能在任何封面上都跳出來 */}
+        {work.featured && (
+          <span className="absolute right-4 bottom-4 flex items-center gap-1 rounded-full bg-[#f5a524] px-3 py-1.5 text-[0.6875rem] font-semibold text-[#241703] shadow-lg shadow-black/30 ring-1 ring-white/40">
+            <span aria-hidden>★</span>
+            精選
           </span>
         )}
       </div>

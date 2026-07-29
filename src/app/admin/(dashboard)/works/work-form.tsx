@@ -22,6 +22,27 @@ const emptyWork: Work = {
   order: 0,
 };
 
+/** 年份下拉選單的範圍：今年往回推到 2010。 */
+const FIRST_YEAR = 2010;
+
+function yearOptions(current: string): string[] {
+  const thisYear = new Date().getFullYear();
+  const years: string[] = [];
+  for (let y = thisYear; y >= FIRST_YEAR; y--) years.push(y.toString());
+  // 舊資料若落在範圍外，補進選單，避免編輯時被靜默改掉
+  if (current && !years.includes(current)) years.unshift(current);
+  return years;
+}
+
+/** 把「用逗號分隔」的輸入字串轉成標籤陣列：去空白、去空值、去重複。 */
+function parseTags(raw: string): string[] {
+  const cleaned = raw
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+  return Array.from(new Set(cleaned));
+}
+
 export default function WorkForm({
   initial,
   originalSlug,
@@ -33,6 +54,11 @@ export default function WorkForm({
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [w, setW] = useState<Work>(initial ?? emptyWork);
+  // 標籤維持「使用者原始輸入字串」，只有送出時才切成陣列。
+  // 若每次 keystroke 都 split + trim，就打不出「React Native」這種含空白的標籤。
+  const [tagsInput, setTagsInput] = useState(() =>
+    (initial?.tags ?? []).join(", "),
+  );
 
   function set<K extends keyof Work>(key: K, val: Work[K]) {
     setW((prev) => ({ ...prev, [key]: val }));
@@ -42,6 +68,10 @@ export default function WorkForm({
     e.preventDefault();
     setError(null);
 
+    const tags = parseTags(tagsInput);
+    // 讓輸入框反映實際存下去的內容（去掉多餘逗號、重複標籤）
+    setTagsInput(tags.join(", "));
+
     const cleaned: Work = {
       ...w,
       slug: w.slug.trim(),
@@ -50,7 +80,8 @@ export default function WorkForm({
       url: w.url?.trim() || undefined,
       role: w.role?.trim() || undefined,
       highlight: w.highlight?.trim() || undefined,
-      tags: w.tags.map((t) => t.trim()).filter(Boolean),
+      cover: w.cover.trim(),
+      tags,
     };
 
     startTransition(async () => {
@@ -109,13 +140,18 @@ export default function WorkForm({
             ))}
           </select>
         </Field>
-        <Field label="年份">
-          <input
-            type="text"
+        <Field label="年份" required>
+          <select
             value={w.year}
             onChange={(e) => set("year", e.target.value)}
             className={inputCls}
-          />
+          >
+            {yearOptions(w.year).map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
         </Field>
       </div>
 
@@ -131,6 +167,8 @@ export default function WorkForm({
 
       <ImageUpload
         label="封面圖片"
+        required
+        hint="JPG / PNG / WebP，最短邊 600px 以上；上傳後統一轉成長邊 1600px 的 JPG"
         value={w.cover}
         onChange={(url) => set("cover", url)}
       />
@@ -154,16 +192,12 @@ export default function WorkForm({
         </Field>
       </div>
 
-      <Field label="技術 / 角色標籤" hint="用逗號分隔，例如 RWD, React, UI">
+      <Field label="技術 / 角色標籤" hint="用逗號分隔，例如 RWD, React Native, UI">
         <input
           type="text"
-          value={w.tags.join(", ")}
-          onChange={(e) =>
-            set(
-              "tags",
-              e.target.value.split(",").map((t) => t.trim()),
-            )
-          }
+          value={tagsInput}
+          onChange={(e) => setTagsInput(e.target.value)}
+          onBlur={() => setTagsInput(parseTags(tagsInput).join(", "))}
           className={inputCls}
         />
       </Field>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { uploadImage } from "@/lib/client-upload";
+import { ACCEPTED_IMAGE_TYPES, uploadImage } from "@/lib/client-upload";
 
 /**
  * 圖片欄位：可上傳檔案（瀏覽器先壓縮再存到 Vercel Blob），也可直接貼網址。
@@ -12,12 +12,16 @@ export default function ImageUpload({
   onChange,
   label,
   prefix = "works",
+  required,
+  hint,
 }: {
   value: string;
   onChange: (url: string) => void;
   label?: string;
   /** 上傳到 Vercel Blob 的路徑前綴。 */
   prefix?: string;
+  required?: boolean;
+  hint?: string;
 }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,7 +45,13 @@ export default function ImageUpload({
   return (
     <div>
       {label && (
-        <label className="block text-sm font-medium text-ink">{label}</label>
+        <label className="block text-sm font-medium text-ink">
+          {label}
+          {required && <span className="ml-1 text-accent">*</span>}
+          {hint && (
+            <span className="ml-2 text-xs font-normal text-muted">{hint}</span>
+          )}
+        </label>
       )}
       <div className="mt-2 flex items-start gap-4">
         {/* 預覽 */}
@@ -73,7 +83,7 @@ export default function ImageUpload({
               {uploading ? "上傳中…" : "上傳圖片"}
               <input
                 type="file"
-                accept="image/*"
+                accept={ACCEPTED_IMAGE_TYPES}
                 onChange={handleFile}
                 disabled={uploading}
                 className="sr-only"

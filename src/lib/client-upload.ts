@@ -7,18 +7,38 @@
 
 /** 壓縮後圖片的最長邊上限（px）。 */
 const MAX_EDGE = 1600;
+/** 來源圖片的最短邊下限（px）：太小的圖放到卡片上會糊掉。 */
+const MIN_EDGE = 600;
+/** 允許選取的來源格式，與後端 storage.ts 的白名單一致。 */
+export const ACCEPTED_IMAGE_TYPES = "image/jpeg,image/png,image/webp";
+/** 來源檔案大小上限（壓縮前）。 */
+const MAX_SOURCE_BYTES = 20 * 1024 * 1024;
 /** JPEG 壓縮品質。 */
 const JPEG_QUALITY = 0.82;
 
 /**
  * 把圖片檔壓縮成 JPEG Blob：最長邊縮到 1600px、quality 0.82。
+ * 來源需為 JPG / PNG / WebP，且最短邊至少 600px。
  */
 export async function compressImage(file: File): Promise<Blob> {
+  if (!ACCEPTED_IMAGE_TYPES.split(",").includes(file.type)) {
+    throw new Error("只接受 JPG / PNG / WebP 圖片");
+  }
+  if (file.size > MAX_SOURCE_BYTES) {
+    throw new Error("原始檔案超過 20MB，請先壓小一點再上傳");
+  }
+
   const dataUrl = await readAsDataURL(file);
   const img = await loadImage(dataUrl);
 
   let width = img.naturalWidth;
   let height = img.naturalHeight;
+  if (Math.min(width, height) < MIN_EDGE) {
+    throw new Error(
+      `圖片解析度太低（${width}×${height}），最短邊至少要 ${MIN_EDGE}px`,
+    );
+  }
+
   const longest = Math.max(width, height);
   if (longest > MAX_EDGE) {
     const scale = MAX_EDGE / longest;

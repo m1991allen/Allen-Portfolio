@@ -39,12 +39,6 @@ export async function getPublishedWorks(): Promise<Work[]> {
   return all.filter((w) => w.published);
 }
 
-/** 已上架且精選的作品 */
-export async function getFeaturedWorks(): Promise<Work[]> {
-  const all = await getPublishedWorks();
-  return all.filter((w) => w.featured);
-}
-
 /** 依 slug 取得單一作品 */
 export async function getWorkBySlug(slug: string): Promise<Work | null> {
   const db = getDb();
