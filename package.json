@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "node --env-file=.env.local --import tsx scripts/seed-firestore.ts",
+    "backup": "node --env-file=.env.local --import tsx scripts/export-firestore.ts",
     "screenshot": "node --import tsx scripts/capture-screenshots.ts"
   },
   "dependencies": {

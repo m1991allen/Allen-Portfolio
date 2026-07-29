@@ -142,7 +142,6 @@ export const experience = [
 /** 學歷 */
 export const education = [
   { school: "世新大學", major: "資訊管理學系・網路科技組" },
-  { school: "新北市立林口高級中學", major: "" },
 ] as const;
 
 /** 抖內快速金額（新台幣） */

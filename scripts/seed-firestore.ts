@@ -8,32 +8,11 @@
  * 文件 ID = 作品的 slug。重複執行會覆蓋既有資料（不會重複新增）。
  */
 
-import { cert, initializeApp, type ServiceAccount } from "firebase-admin/app";
-import { getFirestore } from "firebase-admin/firestore";
+import { connectFirestore } from "./firestore-admin";
 import { works } from "../src/data/works";
 
-function loadServiceAccount(): ServiceAccount {
-  const raw = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-  if (!raw) {
-    console.error(
-      "\n❌ 找不到 FIREBASE_SERVICE_ACCOUNT_KEY，請確認 .env.local 已設定。\n",
-    );
-    process.exit(1);
-  }
-  const json = raw.trim().startsWith("{")
-    ? raw
-    : Buffer.from(raw, "base64").toString("utf8");
-  const parsed = JSON.parse(json);
-  return {
-    projectId: parsed.project_id,
-    clientEmail: parsed.client_email,
-    privateKey: parsed.private_key,
-  };
-}
-
 async function main() {
-  const app = initializeApp({ credential: cert(loadServiceAccount()) });
-  const db = getFirestore(app);
+  const db = connectFirestore();
 
   console.log(`\n開始匯入 ${works.length} 筆作品到 Firestore…\n`);
 

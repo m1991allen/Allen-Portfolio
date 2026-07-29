@@ -13,6 +13,7 @@ const categoryColor: Record<string, string> = {
   媒體專題: "#7c3aed", // 紫（呼應主題重點色）
   互動專題: "#2563eb", // 藍
   企業形象: "#0d9488", // 青綠
+  客戶系統: "#94790d", // 黃
 };
 
 export default function WorkCard({
