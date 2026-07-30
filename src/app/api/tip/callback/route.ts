@@ -25,12 +25,22 @@ export async function POST(request: Request) {
     }
 
     const orderId = body.MerchantTradeNo;
-    const paid = body.RtnCode === "1";
+
+    // RtnCode=1 才是付款成功。RtnCode=2 是「非信用卡取號成功」——目前只開
+    // 信用卡與 Apple Pay，正常不會收到，但寧可記 log 也不要誤標成 failed
+    // （取號成功之後使用者才會真的去繳錢）。
+    if (body.RtnCode === "2") {
+      console.info("[tip/callback] 收到取號通知，略過狀態更新", orderId);
+      return new NextResponse("1|OK", {
+        status: 200,
+        headers: { "Content-Type": "text/plain" },
+      });
+    }
 
     if (isFirebaseConfigured() && orderId) {
       await updateDonationStatus(
         orderId,
-        paid ? "paid" : "failed",
+        body.RtnCode === "1" ? "paid" : "failed",
         body.TradeNo,
       );
     }

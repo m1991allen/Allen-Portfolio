@@ -115,8 +115,27 @@ fetch 只能拿資料回來、不會帶使用者過去。
 | `ItemName` | 商品名稱（會顯示在綠界頁面）|
 | `ReturnURL` | **伺服器**通知網址（最重要，見下一節）|
 | `OrderResultURL` | 付款後**使用者瀏覽器**導回的網址 |
-| `ChoosePayment` | `ALL` = 讓使用者自己選信用卡／ATM／超商 |
+| `ChoosePayment` | 固定指定付款方式：`Credit`（信用卡）或 `ApplePay` |
 | `CheckMacValue` | 上面算出的簽章，一定要最後放 |
+
+### 為什麼 `ChoosePayment` 不用 `ALL`？
+
+填 `ALL` 綠界會多顯示一頁讓使用者自己選（信用卡／ATM／超商／條碼／綠界PAY…），
+但綠界文件自己建議**固定指定付款方式**，因為綠界會不斷新增付款方式，`ALL` 會把
+新方式一起顯示出來，而 `IgnorePayment` 並不能隱藏所有種類（例如綠界PAY）。
+
+所以這個專案改成**在自己的頁面上選**（見 `tipMethods`，定義在
+[`src/data/site.ts`](../src/data/site.ts)），前端送 `method`、後端用
+`isPaymentMethod()` 驗證後直接帶入 `ChoosePayment`。好處是使用者少點一頁，
+也不會冒出我們沒開的付款方式。
+
+> Apple Pay 只在 Apple 裝置可用：iOS 16 以上任何瀏覽器、iOS 15 以下與 macOS
+> 限 Safari。所以那顆按鈕會先偵測環境，不支援就不顯示（否則使用者會跳到一個
+> 沒有付款鈕的綠界頁面）。
+>
+> ATM／超商目前**沒有開啟**。要開的話不只是多加一個值——非信用卡是「先取號、
+> 之後才付款」，必須另外接 `PaymentInfoURL` 收取號結果（虛擬帳號／繳費代碼），
+> 否則使用者拿到帳號但你完全沒有紀錄。
 
 ---
 
@@ -135,6 +154,14 @@ fetch 只能拿資料回來、不會帶使用者過去。
 2. `RtnCode === "1"` → 付款成功 → 把 `donations` 那筆更新成 `paid`。
 3. **回傳純文字 `1|OK`**。這一步不能忘——綠界沒收到 `1|OK` 會以為你沒收到，
    然後每隔一段時間**重送**通知，直到你回 `1|OK` 為止。
+
+因為「會重送」這個特性，`updateDonationStatus()`（[`src/lib/donations.ts`](../src/lib/donations.ts)）
+有三個對應設計，改動時別拆掉：
+
+- 用 `set(..., { merge: true })` 而不是 `update()`：`update()` 遇到不存在的文件會
+  丟錯 → callback 回 500 → 綠界永遠收不到 `1|OK`，就一直重送。
+- **已經 `paid` 的單不會被降級**成 `failed`。
+- 重複收到同一筆成功通知時，`paidAt` 保留第一次的值（冪等）。
 
 ### 路 B：OrderResultURL —— 瀏覽器導回（只負責畫面）
 [`src/app/api/tip/return/route.ts`](../src/app/api/tip/return/route.ts) → 轉址到

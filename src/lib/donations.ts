@@ -49,7 +49,16 @@ export async function createDonation(data: {
   await db.collection(COLLECTION).doc(data.orderId).set(payload);
 }
 
-/** 依訂單編號更新付款狀態 */
+/**
+ * 依訂單編號更新付款狀態。
+ *
+ * 兩個「綠界特性」決定了這裡的寫法：
+ *   1. 綠界沒收到 1|OK 就會重送通知，所以這個函式必須是冪等的——
+ *      重複收到同一筆成功通知，結果要一樣（paidAt 保留第一次的）。
+ *   2. 已經是 paid 的單不能被後來的通知降級成 failed。
+ * 另外用 set(merge) 而不是 update()：update() 遇到不存在的文件會 throw，
+ * 導致 callback 回 500、綠界就一直重送，而後台永遠看不到那筆。
+ */
 export async function updateDonationStatus(
   orderId: string,
   status: DonationStatus,
@@ -58,10 +67,22 @@ export async function updateDonationStatus(
   const db = getDb();
   if (!db) throw new Error("Firebase 尚未設定");
 
-  const patch: Record<string, unknown> = { status };
-  if (tradeNo) patch.tradeNo = tradeNo;
-  if (status === "paid") patch.paidAt = new Date().toISOString();
-  await db.collection(COLLECTION).doc(orderId).update(patch);
+  const ref = db.collection(COLLECTION).doc(orderId);
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    const current = snap.exists
+      ? (snap.data()?.status as DonationStatus | undefined)
+      : undefined;
+
+    if (current === "paid" && status !== "paid") return;
+
+    const patch: Record<string, unknown> = { orderId, status };
+    if (tradeNo) patch.tradeNo = tradeNo;
+    if (status === "paid" && current !== "paid") {
+      patch.paidAt = new Date().toISOString();
+    }
+    tx.set(ref, patch, { merge: true });
+  });
 }
 
 /** 依訂單編號取得單筆 */

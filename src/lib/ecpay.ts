@@ -2,6 +2,8 @@ import "server-only";
 
 import crypto from "node:crypto";
 
+import { tipMethods, type TipMethod } from "@/data/site";
+
 /**
  * 綠界 ECPay 全方位金流（AIO）串接工具。
  *
@@ -19,12 +21,47 @@ import crypto from "node:crypto";
 
 type EcpayEnv = "stage" | "production";
 
+/** 綠界公開的測試環境金鑰，只在 stage 當預設值用 */
+const STAGE_KEYS = {
+  merchantId: "2000132",
+  hashKey: "5294y06JbISpM5x9",
+  hashIV: "v77hoKGq4kWxNNIS",
+} as const;
+
+/**
+ * 可開放的付款方式沿用 data/site 的 tipMethods（前後端同一份清單），
+ * 其 value 就是綠界的 ChoosePayment 值。
+ */
+export type PaymentMethod = TipMethod;
+
+/** 只接受清單內的值，避免前端把任意字串塞進綠界參數 */
+export function isPaymentMethod(value: unknown): value is PaymentMethod {
+  return tipMethods.some((m) => m.value === value);
+}
+
 function config() {
+  const env = (process.env.ECPAY_ENV as EcpayEnv) || "stage";
+  const merchantId = process.env.ECPAY_MERCHANT_ID;
+  const hashKey = process.env.ECPAY_HASH_KEY;
+  const hashIV = process.env.ECPAY_HASH_IV;
+
+  // 正式環境不允許 fallback：少填一組就會拿「測試金鑰」去簽正式站的單，
+  // 綠界只會回一句 CheckMacValue Error，幾乎查不出原因。
+  // 寧可在建單時就明確炸掉。
+  if (env === "production") {
+    if (!merchantId || !hashKey || !hashIV) {
+      throw new Error(
+        "ECPAY_ENV=production 但 ECPAY_MERCHANT_ID / ECPAY_HASH_KEY / ECPAY_HASH_IV 未全部設定",
+      );
+    }
+    return { merchantId, hashKey, hashIV, env };
+  }
+
   return {
-    merchantId: process.env.ECPAY_MERCHANT_ID || "2000132",
-    hashKey: process.env.ECPAY_HASH_KEY || "5294y06JbISpM5x9",
-    hashIV: process.env.ECPAY_HASH_IV || "v77hoKGq4kWxNNIS",
-    env: (process.env.ECPAY_ENV as EcpayEnv) || "stage",
+    merchantId: merchantId || STAGE_KEYS.merchantId,
+    hashKey: hashKey || STAGE_KEYS.hashKey,
+    hashIV: hashIV || STAGE_KEYS.hashIV,
+    env,
   };
 }
 
@@ -100,6 +137,8 @@ export function buildCheckoutParams(opts: {
   tradeDesc: string;
   returnURL: string;
   orderResultURL: string;
+  /** 由使用者在自家頁面選好，直接跳到該付款方式 */
+  method: PaymentMethod;
 }): { action: string; params: Record<string, string> } {
   const { merchantId } = config();
 
@@ -113,7 +152,7 @@ export function buildCheckoutParams(opts: {
     ItemName: opts.itemName,
     ReturnURL: opts.returnURL,
     OrderResultURL: opts.orderResultURL,
-    ChoosePayment: "ALL",
+    ChoosePayment: opts.method,
     EncryptType: "1",
   };
 

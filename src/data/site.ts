@@ -163,3 +163,29 @@ export const education = [
 
 /** 抖內快速金額（新台幣） */
 export const tipPresets = [60, 120, 250] as const;
+
+/**
+ * 抖內付款方式（單一來源）。
+ *
+ * `value` 直接就是綠界的 ChoosePayment 參數值。刻意固定指定付款方式而不用
+ * ALL，綠界文件也建議這樣做——ALL 會連日後新增的付款方式一起顯示。
+ * 前端顯示按鈕、後端驗證都讀這份清單。
+ *
+ * `appleOnly` 的項目只在 Apple 裝置顯示（Apple Pay 在其他裝置上是空白頁）。
+ */
+export const tipMethods = [
+  {
+    value: "Credit",
+    label: "信用卡",
+    hint: "VISA / MasterCard / JCB",
+    appleOnly: false,
+  },
+  {
+    value: "ApplePay",
+    label: "Apple Pay",
+    hint: "免輸入卡號",
+    appleOnly: true,
+  },
+] as const;
+
+export type TipMethod = (typeof tipMethods)[number]["value"];
