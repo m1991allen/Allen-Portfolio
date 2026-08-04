@@ -7,6 +7,7 @@ import {
   updateWork,
   deleteWork,
   setWorkPublished,
+  reorderWorks,
 } from "@/lib/works";
 import type { Work } from "@/data/works";
 
@@ -73,6 +74,24 @@ export async function togglePublishedAction(
     return { ok: true };
   } catch (e) {
     const error = e instanceof Error ? e.message : "更新失敗";
+    return { ok: false, error };
+  }
+}
+
+/** 重新排序作品。slugs 為拖拉後的完整順序，索引即為新的 order。 */
+export async function reorderWorksAction(
+  slugs: string[],
+): Promise<ActionResult> {
+  try {
+    await requireUser();
+    if (!Array.isArray(slugs) || slugs.length === 0) {
+      return { ok: false, error: "沒有收到要排序的作品" };
+    }
+    await reorderWorks(slugs);
+    revalidatePublic();
+    return { ok: true };
+  } catch (e) {
+    const error = e instanceof Error ? e.message : "排序失敗";
     return { ok: false, error };
   }
 }

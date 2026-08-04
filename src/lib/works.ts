@@ -142,6 +142,22 @@ export async function setWorkPublished(
   });
 }
 
+/**
+ * 依傳入的 slug 順序重寫 order 欄位（陣列索引即為新的 order）。
+ * 用 batch 一次送出，任一 slug 不存在就整批失敗，不會寫出半套順序。
+ */
+export async function reorderWorks(slugs: string[]): Promise<void> {
+  const db = getDb();
+  if (!db) throw new Error("Firebase 尚未設定");
+
+  const batch = db.batch();
+  const updatedAt = new Date().toISOString();
+  slugs.forEach((slug, index) => {
+    batch.update(db.collection(COLLECTION).doc(slug), { order: index, updatedAt });
+  });
+  await batch.commit();
+}
+
 /** 刪除作品 */
 export async function deleteWork(slug: string): Promise<void> {
   const db = getDb();
