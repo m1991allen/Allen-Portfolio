@@ -1,9 +1,9 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { del, get, put } from "@vercel/blob";
+import { get, put } from "@vercel/blob";
 import { blobAuth } from "@/lib/blob-auth";
-import { blobPathOf, coverSrcFor } from "@/lib/cover-path";
+import { coverSrcFor } from "@/lib/cover-path";
 
 /**
  * 圖片儲存後端：Vercel Blob（不是 Firebase Storage）。
@@ -55,21 +55,4 @@ export async function readImage(blobPath: string): Promise<Buffer | null> {
   const res = await get(blobPath, { access: "public", ...blobAuth() });
   if (!res || res.statusCode !== 200) return null;
   return Buffer.from(await new Response(res.stream).arrayBuffer());
-}
-
-/**
- * 依 cover 欄位刪除對應的 blob。best-effort：吞掉例外，孤兒 blob 不影響主流程。
- * 同時相容舊制的公開 Blob 網址；外部貼上的網址則略過。
- */
-export async function deleteCoverImage(cover: string): Promise<void> {
-  if (!cover) return;
-  const target =
-    blobPathOf(cover) ??
-    (cover.includes(".blob.vercel-storage.com") ? cover : null);
-  if (!target) return;
-  try {
-    await del(target, blobAuth());
-  } catch {
-    // 刪除失敗不阻斷主流程
-  }
 }
