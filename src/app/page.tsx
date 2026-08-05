@@ -273,8 +273,10 @@ export default async function HomePage() {
                 如果我的作品或分享對你有一點點幫助，歡迎小額抖內。
                 你的每一杯咖啡，都是我持續做東西的動力。
               </p>
+              <p className="mono mt-4 text-xs text-paper/40">
+                本支付以綠界 ECPay 安全結帳，請安心使用。
+              </p>
             </div>
-
             <TipJar />
           </div>
         </div>
