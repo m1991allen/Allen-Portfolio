@@ -1,22 +1,37 @@
 /**
  * 自動截圖作品封面。
  *
- * 對每個作品的 url 用無頭 Chromium 擷取首屏，存成 public/works/{slug}.jpg。
- * 若網站擋掉、逾時或回傳錯誤狀態，改用品牌化的佔位圖（同樣輸出 .jpg）。
+ * 對每個作品的 url 用無頭 Chromium 擷取首屏，直接上傳到 Vercel Blob，
+ * 再把 Firestore 的 cover 欄位改成 /api/cover/{pathname}。本機不會留下任何圖檔。
+ * 若網站擋掉、逾時或回傳錯誤狀態，改用品牌化的佔位圖。
  *
  * 執行：npm run screenshot                    # 全部重截
  *      npm run screenshot -- --only=miu,fixt  # 只截指定 slug（新增作品時用）
  * 需先安裝瀏覽器：npx playwright install chromium
+ * 需要 .env.local 有 FIREBASE_SERVICE_ACCOUNT_KEY 與 BLOB_READ_WRITE_TOKEN。
+ *
+ * 跑完記得 npm run backup，把 Firestore 的最新 cover 同步回 src/data/works.ts。
  */
 
+import { randomUUID } from "node:crypto";
+import { del, put } from "@vercel/blob";
 import { chromium, type Browser } from "playwright";
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
-import { works } from "../src/data/works";
+import { blobAuth } from "../src/lib/blob-auth";
+import { coverSrcFor, blobPathOf } from "../src/lib/cover-path";
+import { connectFirestore } from "./firestore-admin";
 
-const OUT_DIR = path.join(process.cwd(), "public", "works");
 const VIEWPORT = { width: 1440, height: 900 };
 const NAV_TIMEOUT = 30_000;
+/** Blob 路徑前綴，與後台上傳用的一致 */
+const BLOB_PREFIX = "works";
+
+type WorkRow = {
+  slug: string;
+  title: string;
+  category: string;
+  url?: string;
+  cover?: string;
+};
 
 const categoryColor: Record<string, string> = {
   媒體專題: "#c2481e",
@@ -92,7 +107,7 @@ async function capture(browser: Browser, url: string): Promise<Buffer | null> {
 }
 
 /** --only=a,b 只處理指定 slug；沒給就全部重截 */
-function targets() {
+function filterTargets(works: WorkRow[]): WorkRow[] {
   const arg = process.argv.find((a) => a.startsWith("--only="));
   if (!arg) return works;
 
@@ -100,19 +115,22 @@ function targets() {
   const picked = works.filter((w) => wanted.includes(w.slug));
   const missing = wanted.filter((s) => !works.some((w) => w.slug === s));
   if (missing.length) {
-    console.warn(`⚠ works.ts 裡找不到這些 slug：${missing.join(", ")}`);
+    console.warn(`⚠ Firestore 裡找不到這些 slug：${missing.join(", ")}`);
   }
   return picked;
 }
 
 async function main() {
-  await mkdir(OUT_DIR, { recursive: true });
+  const db = connectFirestore();
+  const snap = await db.collection("works").orderBy("order", "asc").get();
+  const works = snap.docs.map((d) => ({ slug: d.id, ...d.data() }) as WorkRow);
+
   const browser = await chromium.launch();
 
   const done: string[] = [];
   const fallback: string[] = [];
 
-  for (const w of targets()) {
+  for (const w of filterTargets(works)) {
     process.stdout.write(`▶ ${w.slug} (${w.url ?? "無公開連結"})\n`);
     let buf = w.url ? await capture(browser, w.url) : null;
     if (!buf) {
@@ -121,9 +139,26 @@ async function main() {
     } else {
       done.push(w.slug);
     }
-    const file = path.join(OUT_DIR, `${w.slug}.jpg`);
-    await writeFile(file, buf);
-    console.log(`   ✓ 已存 ${path.relative(process.cwd(), file)}`);
+
+    const blobPath = `${BLOB_PREFIX}/${randomUUID()}.jpg`;
+    await put(blobPath, buf, {
+      access: "public",
+      addRandomSuffix: false,
+      cacheControlMaxAge: 60 * 60 * 24 * 365,
+      ...blobAuth(),
+    });
+
+    const previous = w.cover ? blobPathOf(w.cover) : null;
+    await db.collection("works").doc(w.slug).update({
+      cover: coverSrcFor(blobPath),
+      updatedAt: new Date().toISOString(),
+    });
+    console.log(`   ✓ 已上傳 ${blobPath} 並更新 Firestore`);
+
+    // 舊圖等新的寫進 Firestore 才刪，中途失敗也不會留下沒有封面的作品
+    if (previous) {
+      await del(previous, blobAuth()).catch(() => {});
+    }
   }
 
   await browser.close();
@@ -136,6 +171,7 @@ async function main() {
   if (fallback.length) {
     console.log("  （佔位圖的作品可日後在 /admin 後台手動上傳封面替換）");
   }
+  console.log("\n記得跑 npm run backup 把 cover 同步回 src/data/works.ts。");
 }
 
 main().catch((e) => {

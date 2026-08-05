@@ -5,9 +5,12 @@ const nextConfig: NextConfig = {
   // 而在 Vercel 上出現 ERR_REQUIRE_ESM。
   serverExternalPackages: ["firebase-admin"],
   images: {
-    // 允許 next/image 載入上傳的圖片
+    // 封面圖一律走自家的 /api/cover 出口（後面接 Vercel Blob），
+    // 鎖成只允許這個路徑，避免最佳化器被拿去當任意本機路徑的代理。
+    localPatterns: [{ pathname: "/api/cover/**", search: "" }],
+    // 保留給手動貼上的外部圖片網址
     remotePatterns: [
-      // Vercel Blob 公開 CDN（目前的圖片儲存後端）
+      // Vercel Blob 公開 CDN（舊制直連網址，已全數改走 /api/cover）
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
       // Firebase Storage（相容既有資料）
       { protocol: "https", hostname: "storage.googleapis.com" },

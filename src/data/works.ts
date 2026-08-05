@@ -3,7 +3,7 @@
  *
  * 這是「個人作品集」的資料模型——每個作品是一個仍在線上的實際網站，
  * 卡片點擊後開新分頁連到 `url`。封面 `cover` 由 scripts/capture-screenshots.ts
- * 自動截圖產生，存在 public/works/ 底下。
+ * 自動截圖產生，圖檔存在 Vercel Blob，本機不留檔。
  *
  * 新增/編輯/上下架都可在後台 /admin 操作；未設定 Firebase 時，
  * 前台會 fallback 回這份 seed 資料，網站仍可正常運作。
@@ -20,7 +20,7 @@ export type Work = {
   category: string;
   /** 外部實際網站連結。內部系統等無公開網址者可留空，卡片會渲染成不可點的區塊 */
   url?: string;
-  /** 封面圖路徑（/works/{slug}.jpg 或 Storage URL） */
+  /** 封面圖路徑（/api/cover/works/{uuid}.jpg，或手動貼上的外部圖片網址） */
   cover: string;
   /** 技術 / 角色標籤 */
   tags: string[];
